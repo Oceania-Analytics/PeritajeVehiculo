@@ -8,7 +8,8 @@ import { deleteSession } from '@/lib/session';
  */
 export async function GET() {
   await deleteSession();
-  return NextResponse.redirect(new URL('/login', process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'));
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  return NextResponse.redirect(`${baseUrl}/login`);
 }
 
 /**
@@ -17,5 +18,6 @@ export async function GET() {
  */
 export async function POST() {
   await deleteSession();
-  return NextResponse.redirect(new URL('/login', process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'));
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  return NextResponse.redirect(`${baseUrl}/login`);
 }

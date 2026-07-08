@@ -50,14 +50,16 @@ export async function proxy(request: NextRequest) {
 
   if (!session) {
     // No valid session — redirect to login
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/login';
     loginUrl.searchParams.set('callbackUrl', encodeURIComponent(pathname));
     return NextResponse.redirect(loginUrl);
   }
 
   // Check if the session has expired
   if (new Date(session.expiresAt) < new Date()) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = '/login';
     return NextResponse.redirect(loginUrl);
   }
 
