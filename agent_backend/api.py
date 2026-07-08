@@ -131,7 +131,8 @@ async def analyze_vehicle_image(file: UploadFile = File(...)):
     try:
         # FIX #1: Crear agente por petición (evita race condition en concurrencia)
         # y usar run_in_executor para no bloquear el event loop principal.
-        local_agent = PeritoAgent(model_name="gemma4:31b-cloud")
+        model_name = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+        local_agent = PeritoAgent(model_name=model_name)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             executor, 
@@ -191,7 +192,8 @@ async def compare_vehicles_endpoint(
         raise HTTPException(status_code=500, detail="Error interno.")
 
     try:
-        local_agent = PeritoAgent(model_name="gemma4:31b-cloud")
+        model_name = os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud")
+        local_agent = PeritoAgent(model_name=model_name)
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             executor, 
