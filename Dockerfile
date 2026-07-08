@@ -30,13 +30,15 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Environment variables needed at build time
-# We provide dummy values here so Next.js can build successfully.
-# Real values will be injected at runtime via docker-compose env_file.
+# NEXT_PUBLIC_ variables MUST be available during build to be baked into the client JS.
+ARG NEXT_PUBLIC_API_URL="http://localhost:8000"
+ARG NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
 ENV SESSION_SECRET="build_time_secret_do_not_use_123" \
     APP_USERNAME="alfredo" \
     APP_PASSWORD_HASH="\$2b\$12\$dummyhashdummyhashdummyhash" \
-    NEXT_PUBLIC_API_URL="http://localhost:8000" \
-    NEXT_PUBLIC_APP_URL="http://localhost:3000" \
+    NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
+    NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL} \
     NODE_ENV="production" \
     NEXT_TELEMETRY_DISABLED=1
 
