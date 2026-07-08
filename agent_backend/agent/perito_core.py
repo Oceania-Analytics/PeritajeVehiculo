@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-import ollama
+from ollama import Client
 from typing import List, Dict, Any
 
 # Ajustar el sys.path si es necesario para importar desde tools
@@ -21,6 +21,13 @@ class PeritoAgent:
         (ej. llama3.2-vision o similar en Ollama).
         """
         self.model_name = model_name
+        
+        # Configurar cliente Ollama personalizado para soportar modelos en la nube (ej. con API Key)
+        ollama_url = os.environ.get("OLLAMA_URL", "http://ollama:11434")
+        ollama_api_key = os.environ.get("OLLAMA_API_KEY", "")
+        headers = {"Authorization": f"Bearer {ollama_api_key}"} if ollama_api_key else {}
+        self.ollama_client = Client(host=ollama_url, headers=headers)
+        
         self.messages = []
         self.system_prompt = (
             "Eres un Arquitecto Especialista en Inteligencia Artificial Agéntica y Perito de Vehículos. "
@@ -138,7 +145,7 @@ class PeritoAgent:
         all_crops = []
 
         # Fase 1: Evaluación Inicial y Decisión de Herramienta
-        response = ollama.chat(
+        response = self.ollama_client.chat(
             model=self.model_name,
             messages=self.messages,
             tools=self._get_tool_schema()
@@ -153,7 +160,7 @@ class PeritoAgent:
                 "role": "user",
                 "content": "REGLA CRÍTICA: Has emitido un veredicto sin usar la herramienta. ESTO ESTÁ PROHIBIDO. Aunque el vehículo parezca estar en perfecto estado, DEBES llamar obligatoriamente a 'extract_vehicle_parts' para analizar cada pieza al detalle antes de dar tu informe. Llama a la herramienta ahora."
             })
-            response = ollama.chat(
+            response = self.ollama_client.chat(
                 model=self.model_name,
                 messages=self.messages,
                 tools=self._get_tool_schema()
@@ -228,7 +235,7 @@ class PeritoAgent:
                 "content": next_prompt
             })
 
-        final_response = ollama.chat(
+        final_response = self.ollama_client.chat(
             model=self.model_name,
             messages=self.messages,
             format="json"
@@ -316,7 +323,7 @@ class PeritoAgent:
         
         all_crops_after = []
 
-        response = ollama.chat(
+        response = self.ollama_client.chat(
             model=self.model_name,
             messages=self.messages,
             tools=self._get_tool_schema()
@@ -330,7 +337,7 @@ class PeritoAgent:
                 "role": "user",
                 "content": "DEBES llamar obligatoriamente a 'extract_vehicle_parts' con la imagen DESPUÉS para analizar cada pieza al detalle antes de dar tu informe. Hazlo ahora."
             })
-            response = ollama.chat(
+            response = self.ollama_client.chat(
                 model=self.model_name,
                 messages=self.messages,
                 tools=self._get_tool_schema()
@@ -388,7 +395,7 @@ class PeritoAgent:
                 "content": next_prompt
             })
 
-        final_response = ollama.chat(
+        final_response = self.ollama_client.chat(
             model=self.model_name,
             messages=self.messages,
             format="json"
