@@ -58,6 +58,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Configured for Plesk subdirectory deployment
+  basePath: "/demo/peritaje",
+  
   // Enable standalone mode for Docker — bundles only what's needed to run
   output: "standalone",
 
