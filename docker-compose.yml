@@ -21,6 +21,8 @@ services:
     ports:
       # Expose to localhost only — prevents unintended external access
       - "127.0.0.1:8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
     env_file:
       - .env.docker
     volumes:
@@ -59,6 +61,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+      ollama:
+        condition: service_started
     networks:
       - peritaje-network
     healthcheck:
@@ -73,11 +77,31 @@ services:
           memory: 1g
           cpus: "1"
 
+  # ── Ollama Local LLM Server ──────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: peritaje-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - peritaje-network
+    # IMPORTANT: If your server has an NVIDIA GPU, uncomment the lines below to enable GPU acceleration.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
 # ── Named volumes (ephemeral data — no sensitive data persisted) ────────────────
 volumes:
   backend-uploads:
     driver: local
   backend-crops:
+    driver: local
+  ollama-data:
     driver: local
 
 # ── Internal network ───────────────────────────────────────────────────────────
