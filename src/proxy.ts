@@ -23,8 +23,13 @@ const PUBLIC_API_PREFIXES = ['/api/auth/'];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Normalize pathname to remove trailing slash for exact matches
+  const normalizedPathname = pathname.endsWith('/') && pathname.length > 1 
+    ? pathname.slice(0, -1) 
+    : pathname;
+
   // Allow public routes without authentication
-  if (PUBLIC_ROUTES.includes(pathname)) {
+  if (PUBLIC_ROUTES.includes(normalizedPathname)) {
     return NextResponse.next();
   }
 
