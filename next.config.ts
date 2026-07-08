@@ -78,6 +78,8 @@ const nextConfig: NextConfig = {
 
   // Strict mode for React — helps catch bugs early
   reactStrictMode: true,
+
+  trailingSlash: true,
 };
 
 export default nextConfig;
