@@ -1,0 +1,85 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — OceanIA PeritajeVehiculo
+# Orchestrates the Next.js frontend and the FastAPI backend.
+#
+# Usage:
+#   docker-compose --env-file .env.docker up --build
+#
+# Both services communicate over the internal "peritaje-network".
+# Only the frontend is exposed to the host on port 3000.
+# The backend is exposed on port 8000 so the browser can call /api/analyze.
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+  # ── Python FastAPI Backend ──────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./agent_backend
+      dockerfile: Dockerfile
+    container_name: peritaje-backend
+    restart: unless-stopped
+    ports:
+      # Expose to localhost only — prevents unintended external access
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - .env.docker
+    volumes:
+      # Persistent tmp directories for uploads and crops (in-container ephemeral)
+      - backend-uploads:/tmp/perito_uploads
+      - backend-crops:/tmp/vehicle_crops
+    networks:
+      - peritaje-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    # Resource limits — prevent runaway processes from consuming all system memory
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: "2"
+
+  # ── Next.js Frontend ────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peritaje-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - peritaje-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "1"
+
+# ── Named volumes (ephemeral data — no sensitive data persisted) ────────────────
+volumes:
+  backend-uploads:
+    driver: local
+  backend-crops:
+    driver: local
+
+# ── Internal network ───────────────────────────────────────────────────────────
+networks:
+  peritaje-network:
+    driver: bridge
+    # Disable ICC to prevent containers from reaching each other unexpectedly
+    # (only explicit links / depends_on + network membership communicate)

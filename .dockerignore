@@ -1,0 +1,77 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# .dockerignore — excludes files from the Docker build context
+# This reduces build time, image size, and prevents accidental inclusion
+# of sensitive files (secrets, credentials, local configs).
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Environment files — NEVER include in Docker images
+.env
+.env.*
+!.env.example
+
+# Python
+agent_backend/venv/
+agent_backend/__pycache__/
+agent_backend/**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+agent_backend/.pytest_cache/
+agent_backend/*.egg-info/
+agent_backend/dist/
+
+# Model weights (large files — mount as volume instead if needed)
+agent_backend/runs/
+*.pt
+
+# Version control
+.git/
+.gitignore
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
+
+# CI / Docker files (not needed inside container)
+docker-compose*.yml
+Dockerfile*
+
+# Documentation
+README.md
+*.md
+
+# Agent memory files
+.agents/
+AGENTS.md
+CLAUDE.md

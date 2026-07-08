@@ -1,0 +1,20 @@
+names:
+- back_bumper
+- back_door
+- back_glass
+- back_light
+- front_bumper
+- front_door
+- front_glass
+- front_light
+- hood
+nc: 9
+roboflow:
+  license: Public Domain
+  project: car-parts-llqro
+  url: https://universe.roboflow.com/segmentation-9q8ob/car-parts-llqro/dataset/1
+  version: 1
+  workspace: segmentation-9q8ob
+test: ../test/images
+train: ../train/images
+val: ../valid/images

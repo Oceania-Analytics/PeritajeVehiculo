@@ -31,7 +31,10 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
+# .env.example is safe to commit (no real secrets)
 .env*
+!.env.example
+
 
 # vercel
 .vercel
@@ -39,3 +42,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python backend
+agent_backend/venv/
+agent_backend/__pycache__/
+agent_backend/agent/__pycache__/
+agent_backend/tools/__pycache__/
+*.pt
