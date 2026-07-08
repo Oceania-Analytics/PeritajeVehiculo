@@ -14,7 +14,7 @@ from tools.yolo_extractor import extract_vehicle_parts_tool
 logger = logging.getLogger(__name__)
 
 class PeritoAgent:
-    def __init__(self, model_name: str = "gemma4:31b-cloud"):
+    def __init__(self, model_name: str = "llama3.2-vision"):
         """
         Inicializa el Agente Perito de Vehículos.
         Requiere un modelo que soporte tanto visión como tool calling 

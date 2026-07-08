@@ -17,6 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# Configure writable directories for YOLO and Matplotlib to suppress warnings
+ENV YOLO_CONFIG_DIR=/tmp/Ultralytics
+ENV MPLCONFIGDIR=/tmp/matplotlib
+
 # ── Install Python dependencies ────────────────────────────────────────────────
 # Copy requirements first to leverage Docker layer caching
 COPY requirements.txt .
