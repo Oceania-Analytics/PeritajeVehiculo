@@ -161,8 +161,8 @@ export default function DemoGalleryPage() {
     // Generate the array of 12 demo images
     const newImages = [];
     for (let i = 1; i <= 6; i++) {
-      newImages.push({ id: `damaged_${i}`, url: `/demo/damaged_${i}.jpg`, type: 'damaged' as const });
-      newImages.push({ id: `undamaged_${i}`, url: `/demo/undamaged_${i}.jpg`, type: 'undamaged' as const });
+      newImages.push({ id: `damaged_${i}`, url: `/demo/peritaje/demo/damaged_${i}.jpg`, type: 'damaged' as const });
+      newImages.push({ id: `undamaged_${i}`, url: `/demo/peritaje/demo/undamaged_${i}.jpg`, type: 'undamaged' as const });
     }
     // Interleave them so it's not all damaged first
     const interleaved = [];
